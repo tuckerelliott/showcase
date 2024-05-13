@@ -45,10 +45,7 @@ export default async function decorate(block) {
     const link = block.querySelector('a');
     const cardData = await fetchJson(link);
     cardData.forEach((item) => {
-      const picture = createOptimizedPicture(item.AccountLogoURL, 
-                                              item.Opportunity, 
-                                              false, 
-                                              [{ width: 320 }]);
+      const picture = createOptimizedPicture(item.AccountLogoURL,item.Opportunity,false,[{ width: 320 }]);
       picture.lastElementChild.width = '320';
       picture.lastElementChild.height = '180';
       const createdCard = document.createElement('li');
@@ -68,7 +65,6 @@ export default async function decorate(block) {
       ul.append(createdCard);
     });
   }
-  
   block.textContent = '';
   block.append(ul);
 }
