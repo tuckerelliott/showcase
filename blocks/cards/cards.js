@@ -1,4 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import { formatDate } from './helper-functions.js';
 
 export default function CardsPortfolio (block) {
   const link = block.querySelector('a');
@@ -9,41 +10,41 @@ export default function CardsPortfolio (block) {
   function createCards(groups) {  
     const updatedCards = [];
   
+    const createCardHTML = (item, isFeatured) => {
+      const optimizedDemoImage = createOptimizedPicture(item.AccountLogoURL, item.Opportunity, true, [{ width: '350' }]);
+      return `
+        <div class="small-card">
+          <div class="card-flip wrapper">
+            <div class="card card-images ${isFeatured ? 'featured' : ''}">
+              ${isFeatured ? '<span>Featured</span>' : ''}
+              <a class="demo-title" href="${item.DemoURL}" target="_blank">${item.Opportunity}</a>
+              ${optimizedDemoImage.outerHTML}
+            </div>
+            <div class="card card-info">
+              <div class="date-live-wrapper">
+                <span>${formatDate(item.Added)}</span>
+                <span>XSC: ${item.XSC}</span>
+              </div>
+              <div class="github-drive-wrapper">
+                ${item.DemoGit ? 
+                `<div class="icon">
+                  <a class="github-link" href="${item.DemoGit} target="_blank""><img src="/icons/github-logo.svg" alt="GitHub Logo"/></a>
+                </div>`
+                : ""}
+              </div>
+              <div class="site-xsc-wrapper">
+                <a class="demo-site-link" href="${item.DemoURL}">Live Demo Site</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+    
     groups.forEach((group) => {
-      group.forEach((item, i) => {
-        const optimizedDemoImage = createOptimizedPicture(item.AccountLogoURL, item.Opportunity, true, [{ width: '350' }]);
-  
-        if (item.Featured === 'true') {
-          updatedCards.push(`
-            <div class="small-card">
-              <div class="card-flip wrapper">
-                <div class="card card-images featured">
-                  <span>Featured</span>
-                  <div class="demo-title">${item.Opportunity}</div>
-                  ${optimizedDemoImage.outerHTML}
-                </div>
-                <div class="card card-info">
-                  <a class="demo-site-link" href="${item.DemoURL}">Demo Site</a>
-                </div>
-              </div>
-            </div>
-          `);
-        } else {
-          updatedCards.push(`
-            <div class="small-card">
-              <div class="card-flip wrapper">
-                <div class="card card-images">
-                  <div class="demo-title">${item.Opportunity}</div>
-                  ${optimizedDemoImage.outerHTML}
-                </div>
-                <div class="card card-info">
-                  <a class="demo-site-link" href="${item.DemoURL}">Demo Site</a>
-                </div>
-              </div>
-            </div>
-          `);
-        }
-  
+      group.forEach((item) => {
+        const isFeatured = item.Featured === 'true';
+        updatedCards.push(createCardHTML(item, isFeatured));
       });
     });
   
