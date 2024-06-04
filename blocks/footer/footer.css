@@ -25,3 +25,12 @@ footer .footer img {
   width: 55px;
   height: auto;
 }
+
+@media (width <= 768px) {
+  footer .footer .default-content-wrapper {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+}

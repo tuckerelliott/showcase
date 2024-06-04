@@ -1,70 +1,103 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
-export default async function decorate(block) {
-  const isIconCards = block.classList.contains('icon');
-  const isArticleCards = block.classList.contains('articles');
+export default function CardsPortfolio (block) {
+  const link = block.querySelector('a');
+  let data = [];
 
-  async function fetchJson(link) {
+  block.textContent = '';
+
+  function createCards(groups) {  
+    const updatedCards = [];
+  
+    groups.forEach((group) => {
+      group.forEach((item, i) => {
+        const optimizedDemoImage = createOptimizedPicture(item.AccountLogoURL, item.Opportunity, true, [{ width: '350' }]);
+  
+        if (item.Featured === 'true') {
+          updatedCards.push(`
+            <div class="small-card">
+              <div class="card-flip wrapper">
+                <div class="card card-images featured">
+                  <span>Featured</span>
+                  <div class="demo-title">${item.Opportunity}</div>
+                  ${optimizedDemoImage.outerHTML}
+                </div>
+                <div class="card card-info">
+                  <a class="demo-site-link" href="${item.DemoURL}">Demo Site</a>
+                </div>
+              </div>
+            </div>
+          `);
+        } else {
+          updatedCards.push(`
+            <div class="small-card">
+              <div class="card-flip wrapper">
+                <div class="card card-images">
+                  <div class="demo-title">${item.Opportunity}</div>
+                  ${optimizedDemoImage.outerHTML}
+                </div>
+                <div class="card card-info">
+                  <a class="demo-site-link" href="${item.DemoURL}">Demo Site</a>
+                </div>
+              </div>
+            </div>
+          `);
+        }
+  
+      });
+    });
+  
+    block.innerHTML = `<div class="portfolio-card-container"><div class="small-card-container">${updatedCards.join('')}</div></div>`;
+  
+    // Add card-flip animation
+    const cards = document.querySelectorAll('.card-flip');
+    [...cards].forEach((card) => {
+      card.addEventListener('click', function() {
+        card.classList.toggle('is-flipped');
+      });
+  
+      // Prevent the card from flipping when clicking on a link or button
+      const linksAndButtons = card.querySelectorAll('a, button');
+      [...linksAndButtons].forEach((el) => {
+        el.addEventListener('click', (event) => {
+          event.stopPropagation();
+        });
+      });
+    });
+  }
+
+  function sortData(data) {
+    let result = [];
+    let temp = [];
+  
+    for (let i = 0; i < data.length; i++) {
+      temp.push(data[i]);
+      if (temp.length === 8) { //groups of 8
+        result.push(temp);
+        temp = [];
+      }
+    }
+  
+    if (temp.length > 0) {
+      result.push(temp);
+    }
+  
+    return result;
+  }
+
+  async function initialize() {
     const response = await fetch(link?.href);
 
     if (response.ok) {
       const jsonData = await response.json();
-      const data = jsonData?.data;
-      return data;
+      data = jsonData?.data;
+      
+      let sortedGroups = sortData(data);
+      createCards(sortedGroups);
+    } else {
+      console.log("Unable to get json data for cards portfolio");
     }
-    return 'an error occurred';
   }
 
-  const ul = document.createElement('ul');
-
-  if (isIconCards) {
-    [...block.children].forEach((row) => {
-      const anchor = document.createElement('a');
-      anchor.href = '';
-      const li = document.createElement('li');
-      while (row.firstElementChild) li.append(row.firstElementChild);
-      [...li.children].forEach((div) => {
-        if (div.children.length === 1 && div.querySelector('a')) {
-          const linkURL = div.querySelector('a').innerHTML;
-          anchor.href = linkURL;
-          div.className = 'cards-hide-markdown';
-        } else if (div.children.length === 1 && div.querySelector('picture')) {
-          div.className = 'cards-card-image';
-        } else if (div.children.length === 1 && div.querySelector('span')) {
-          div.className = 'cards-card-icon';
-        } else {
-          div.className = 'cards-card-body';
-        }
-      });
-      anchor.append(li);
-      ul.append(anchor);
-    });
-  }
-
-  if (isArticleCards) {
-    const link = block.querySelector('a');
-    const cardData = await fetchJson(link);
-    cardData.forEach((item) => {
-      const picture = createOptimizedPicture(item.AccountLogoURL,item.Opportunity,false,[{ width: 320 }]);
-      picture.lastElementChild.width = '320';
-      picture.lastElementChild.height = '180';
-      const createdCard = document.createElement('li');
-      createdCard.innerHTML = `
-        <div class="cards-card-image">
-          <div data-align="center">${picture.outerHTML}</div>
-        </div>
-        <div class="cards-card-body">
-          <h5>${item.Opportunity}</h5>
-          <p class="button-container">
-            <a href="${item.DemoURL}" aria-label="${item['anchor-text']}" title="${item['anchor-text']}" class="button">
-              Go to Demo
-            </a>
-          </p>
-        </div>
-      `;
-      ul.append(createdCard);
-    });
-  }
-  block.textContent = '';
-  block.append(ul);
+  initialize();
 }
