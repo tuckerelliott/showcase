@@ -5,10 +5,23 @@ footer {
 }
 
 footer .footer {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: auto;
+}
+
+footer .footer .default-content-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  justify-content: space-between;
 }
 
 footer .footer p {
   margin: 0;
+  font-size: 14px;
+}
+
+footer .footer img {
+  width: 55px;
+  height: auto;
 }
