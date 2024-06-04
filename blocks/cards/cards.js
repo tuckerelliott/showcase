@@ -28,12 +28,12 @@ export default function CardsPortfolio (block) {
               <div class="github-drive-wrapper">
                 ${item.DemoGit ? 
                 `<div class="icon">
-                  <a class="github-link" href="${item.DemoGit} target="_blank""><img src="/icons/github-logo.svg" alt="GitHub Logo"/></a>
+                  <a class="github-link" href="${item.DemoGit}" target="_blank"><img src="/icons/github-logo.svg" alt="GitHub Logo"/></a>
                 </div>`
                 : ""}
               </div>
               <div class="site-xsc-wrapper">
-                <a class="demo-site-link" href="${item.DemoURL}">Live Demo Site</a>
+                <a class="demo-site-link" href="${item.DemoURL}" target="_blank">Live Demo Site</a>
               </div>
             </div>
           </div>
