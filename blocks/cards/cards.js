@@ -12,6 +12,7 @@ export default function CardsPortfolio (block) {
   
     const createCardHTML = (item, isFeatured) => {
       const optimizedDemoImage = createOptimizedPicture(item.AccountLogoURL, item.Opportunity, true, [{ width: '350' }]);
+
       return `
         <div class="small-card">
           <div class="card-flip wrapper">
@@ -31,6 +32,23 @@ export default function CardsPortfolio (block) {
                   <a class="github-link" href="${item.DemoGit}" target="_blank"><img src="/icons/github-logo.svg" alt="GitHub Logo"/></a>
                 </div>`
                 : ""}
+                ${item.DocBased ?
+                  `<div class="icon">
+                    <img src="${item.DocBased === "Google" ? "/icons/google-drive-logo.svg" : item.DocBased === "Microsoft" ? "/icons/sharepoint-logo.svg" : item.DocBased === "DarkAlley" ? "/icons/adobe-logo-placeholder.svg" : "" }" alt="" />
+                  </div>`
+                : ""}
+              </div>
+              <div class="related-wrapper">
+                ${item.Experimentation ? `<span class="pill experimentation">Experimentation</span>`: ""}
+                ${item.Commerce ? `<span class="pill commerce">Commerce</span>` : ""}
+                ${item.Forms ?`<span class="pill forms">Forms</span>` : ""}
+                ${item.Crosswalk ? `<span class="pill crosswalk">Crosswalk</span>` : ""}
+              </div>
+              <div class="links-wrapper">
+                  ${item.OpportunityURL || item.DemoHub ? `<span>Links: </span>` : "" }
+                  ${item.OpportunityURL ? `<a href="${item.OpportunityURL}" target="_blank">Opportunity URL</a>` : ""}
+                  ${item.OpportunityURL && item.DemoHub ? ", " : ""}
+                  ${item.DemoHub ? `<a href="${item.DemoHub}" target="_blank">DemoHub</a>` : ""}
               </div>
               <div class="site-xsc-wrapper">
                 <a class="demo-site-link" href="${item.DemoURL}" target="_blank">Live Demo Site</a>
