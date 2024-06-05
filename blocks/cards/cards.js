@@ -4,11 +4,28 @@ import { formatDate } from './helper-functions.js';
 export default function CardsPortfolio (block) {
   const link = block.querySelector('a');
   let data = [];
+  let currentOption = 'all';
 
   block.textContent = '';
 
   function createCards(groups) {  
     const updatedCards = [];
+    
+    const createSelectOptions = () => {
+      return`
+        <label for="options">Filter By: </label>
+        <select id="options">
+          <option value="all" ${currentOption === 'all' ? 'selected' : ''}>All</option>
+          <option value="sharepoint" ${currentOption === 'sharepoint' ? 'selected' : ''}>DocBased - SharePoint</option>
+          <option value="google-drive" ${currentOption === 'google-drive' ? 'selected' : ''}>DocBased - Google Drive</option>
+          <option value="dark-alley" ${currentOption === 'dark-alley' ? 'selected' : ''}>DocBased - Dark Alley</option>
+          <option value="experimentation" ${currentOption === 'experimentation' ? 'selected' : ''}>Experimentation</option>
+          <option value="commerce" ${currentOption === 'commerce' ? 'selected' : ''}>Commerce</option>
+          <option value="forms" ${currentOption === 'forms' ? 'selected' : ''}>Forms</option>
+          <option value="crosswalk" ${currentOption === 'crosswalk' ? 'selected' : ''}>Crosswalk</option>
+        </select>
+      `;
+    };
   
     const createCardHTML = (item, isFeatured) => {
       const optimizedDemoImage = createOptimizedPicture(item.AccountLogoURL, item.Opportunity, true, [{ width: '350' }]);
@@ -66,23 +83,15 @@ export default function CardsPortfolio (block) {
       });
     });
   
-    block.innerHTML = `<div class="portfolio-card-container"><div class="small-card-container">${updatedCards.join('')}</div></div>`;
-  
-    // Add card-flip animation
-    const cards = document.querySelectorAll('.card-flip');
-    [...cards].forEach((card) => {
-      card.addEventListener('click', function() {
-        card.classList.toggle('is-flipped');
-      });
-  
-      // Prevent the card from flipping when clicking on a link or button
-      const linksAndButtons = card.querySelectorAll('a, button');
-      [...linksAndButtons].forEach((el) => {
-        el.addEventListener('click', (event) => {
-          event.stopPropagation();
-        });
-      });
-    });
+    block.innerHTML = `
+      <div class="portfolio-card-container">
+        <div class="filter-container">${createSelectOptions()}</div>
+        <div class="small-card-container">
+          ${updatedCards.join('')}
+        </div>
+      </div>`;
+
+    initEventHandlers();
   }
 
   function sortData(data) {
@@ -102,6 +111,46 @@ export default function CardsPortfolio (block) {
     }
   
     return result;
+  }
+
+  function handleSelectChange(event) {
+    currentOption = event.target.value;
+  
+    const filterConditions = {
+      "all": (item) => true,
+      "sharepoint": (item) => item.DocBased === "Microsoft",
+      "google-drive": (item) => item.DocBased === "Google",
+      "dark-alley": (item) => item.DocBased === "DarkAlley",
+      "experimentation": (item) => item.Experimentation === "true",
+      "commerce": (item) => item.Commerce === "true",
+      "forms": (item) => item.Forms === "true",
+      "crosswalk": (item) => item.Crosswalk === "true",
+    };
+  
+    const filteredData = data.filter(filterConditions[currentOption]);
+  
+    createCards([filteredData]);
+  }
+
+  function initEventHandlers() {
+    const selectElement = block.querySelector('#options');
+    selectElement.addEventListener('change', handleSelectChange);
+  
+    // Add card-flip animation
+    const cards = block.querySelectorAll('.card-flip');
+    [...cards].forEach((card) => {
+      card.addEventListener('click', function() {
+        card.classList.toggle('is-flipped');
+      });
+  
+      // Prevent the card from flipping when clicking on a link or button
+      const linksAndButtons = card.querySelectorAll('a, button');
+      [...linksAndButtons].forEach((el) => {
+        el.addEventListener('click', (event) => {
+          event.stopPropagation();
+        });
+      });
+    });
   }
 
   async function initialize() {

@@ -4,6 +4,26 @@
   gap: 16px; /* added gap for consistency */
 }
 
+.cards.portfolio .filter-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (width <= 768px) {
+  .cards.portfolio .filter-container {
+    justify-content: flex-start;
+  }
+}
+
+.cards.portfolio .filter-container label {
+  font-size: 18px;
+}
+
+.cards.portfolio .filter-container select {
+  font-size: 18px;
+}
+
 .cards.portfolio .small-card-container {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
