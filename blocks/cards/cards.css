@@ -269,6 +269,14 @@
   transform: translateX(-100%) rotateY(-180deg);
 }
 
+.cards.portfolio .small-card .card-flip .card.card-images.featured {
+  transition: visibility 0s 1s, opacity 1s linear; /* Delay visibility by 1s */
+}
+
+.cards.portfolio .small-card .card-flip.is-flipped .card.card-images {
+  opacity: 0;
+}
+
 .cards.portfolio .small-card .card {
   position: absolute;
   width: 100%;
