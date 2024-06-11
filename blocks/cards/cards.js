@@ -1,5 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
-import { formatDate } from './helper-functions.js';
+import { formatDate, replaceDoubleQuotesWithSingle } from './helper-functions.js';
 
 export default function CardsPortfolio (block) {
   const link = block.querySelector('a');
@@ -7,6 +7,17 @@ export default function CardsPortfolio (block) {
   let currentOption = 'all';
 
   block.textContent = '';
+
+  function isDevelopmentMode() {
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    const url = window.location.href;
+  
+    const isLocalhost = (hostname === 'localhost' && port === '3000');
+    const isPageDomain = url.endsWith('.page') || url.includes('.page/');
+  
+    return isLocalhost || isPageDomain;
+  }
 
   function createCards(groups) {  
     const updatedCards = [];
@@ -29,7 +40,8 @@ export default function CardsPortfolio (block) {
   
     const createCardHTML = (item, isFeatured) => {
       const optimizedDemoImage = createOptimizedPicture(item.AccountLogoURL, item.Opportunity, true, [{ width: '350' }]);
-
+      const demoNotes = replaceDoubleQuotesWithSingle(item.DemoNotes);
+    
       return `
         <div class="small-card">
           <div class="card-flip wrapper">
@@ -52,6 +64,11 @@ export default function CardsPortfolio (block) {
                 ${item.DocBased ?
                   `<div class="icon">
                     <img src="${item.DocBased === "Google" ? "/icons/google-drive-logo.svg" : item.DocBased === "Microsoft" ? "/icons/sharepoint-logo.svg" : item.DocBased === "DarkAlley" ? "/icons/adobe-logo-placeholder.svg" : "" }" alt="" />
+                  </div>`
+                : ""}
+                ${isDevelopmentMode() ? 
+                  `<div class="demo-info-wrapper">
+                    <button class="demo-info-btn" type="button" title="Click to learn more" data-demo-notes="${demoNotes}" data-demo-title="${item.Opportunity}">Demo Info</button>
                   </div>`
                 : ""}
               </div>
@@ -88,6 +105,15 @@ export default function CardsPortfolio (block) {
         <div class="filter-container">${createSelectOptions()}</div>
         <div class="small-card-container">
           ${updatedCards.join('')}
+        </div>
+      </div>
+      <div class="modal" id="demoModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>Demo Notes</div>
+            <span class="close">&times;</span>
+          </div>
+          <div id="demoNotesContent"></div>
         </div>
       </div>`;
 
@@ -151,6 +177,37 @@ export default function CardsPortfolio (block) {
         });
       });
     });
+  
+    // Add onclick event to demo-info-btn buttons
+    const demoInfoButtons = block.querySelectorAll('.demo-info-btn');
+    demoInfoButtons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const demoNotes = button.getAttribute('data-demo-notes');
+        const demoTitle = button.getAttribute('data-demo-title');
+        const modal = document.getElementById('demoModal');
+        const modalContent = document.getElementById('demoNotesContent');
+        const modalHeader = modal.querySelector('.modal-header div');
+  
+        modalContent.innerHTML = demoNotes;
+        modalHeader.textContent = `${demoTitle} - Demo Notes`;
+        modal.style.display = 'block';
+      });
+    });
+  
+    // Close the modal
+    const modal = document.getElementById('demoModal');
+    const closeBtn = modal.querySelector('.close');
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+  
+    // Close the modal when clicking outside of it
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
   }
 
   async function initialize() {
@@ -163,7 +220,7 @@ export default function CardsPortfolio (block) {
       let sortedGroups = sortData(data);
       createCards(sortedGroups);
     } else {
-      console.log("Unable to get json data for cards portfolio");
+      console.error("Failed to fetch data");
     }
   }
 

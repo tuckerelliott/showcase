@@ -172,6 +172,17 @@
 
 .cards.portfolio .github-drive-wrapper {
   margin: auto 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.cards.portfolio .github-drive-wrapper .demo-info-wrapper {
+  margin-left: auto;
+}
+
+.cards.portfolio .github-drive-wrapper .demo-info-btn {
+  margin-top: 0.75rem;
+  font-size: 18px;
 }
 
 .cards.portfolio .github-drive-wrapper .icon {
@@ -270,11 +281,11 @@
 }
 
 .cards.portfolio .small-card .card-flip .card.card-images.featured {
-  transition: visibility 0s 1s, opacity 1s linear; /* Delay visibility by 1s */
+  /* transition: visibility 0s 0.5s, opacity 0.5s linear; Delay visibility by 0.5s */
 }
 
 .cards.portfolio .small-card .card-flip.is-flipped .card.card-images {
-  opacity: 0;
+  /* opacity: 0; */
 }
 
 .cards.portfolio .small-card .card {
@@ -306,3 +317,64 @@
   }
 }
 /* End of Cards - Portfolio */
+
+
+/* Modal Container */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 2rem;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 750px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    margin-top: 100px;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.close {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: 0;
+  top: -5px;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#demoNotesContent {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
