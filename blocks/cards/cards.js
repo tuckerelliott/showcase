@@ -1,7 +1,7 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { formatDate, replaceDoubleQuotesWithSingle } from './helper-functions.js';
 
-export default function CardsPortfolio (block) {
+export default function CardsPortfolio(block) {
   const link = block.querySelector('a');
   let data = [];
   let currentOption = 'all';
@@ -12,18 +12,18 @@ export default function CardsPortfolio (block) {
     const hostname = window.location.hostname;
     const port = window.location.port;
     const url = window.location.href;
-  
+
     const isLocalhost = (hostname === 'localhost' && port === '3000');
     const isPageDomain = url.endsWith('.page') || url.includes('.page/');
-  
+
     return isLocalhost || isPageDomain;
   }
 
-  function createCards(groups) {  
+  function createCards(groups) {
     const updatedCards = [];
-    
+
     const createSelectOptions = () => {
-      return`
+      return `
         <label for="options">Filter By: </label>
         <select id="options">
           <option value="all" ${currentOption === 'all' ? 'selected' : ''}>All</option>
@@ -37,11 +37,11 @@ export default function CardsPortfolio (block) {
         </select>
       `;
     };
-  
+
     const createCardHTML = (item, isFeatured) => {
       const optimizedDemoImage = createOptimizedPicture(item.AccountLogoURL, item.Opportunity, true, [{ width: '350' }]);
       const demoNotes = replaceDoubleQuotesWithSingle(item.DemoNotes);
-    
+
       return `
         <div class="small-card">
           <div class="card-flip wrapper">
@@ -56,7 +56,7 @@ export default function CardsPortfolio (block) {
                 <span>XSC: ${item.XSC}</span>
               </div>
               <div class="github-drive-wrapper">
-                ${item.DemoGit ? 
+                ${item.DemoGit ?
                 `<div class="icon">
                   <a class="github-link" href="${item.DemoGit}" target="_blank"><img src="/icons/github-logo.svg" alt="GitHub Logo"/></a>
                 </div>`
@@ -66,9 +66,9 @@ export default function CardsPortfolio (block) {
                     <img src="${item.DocBased === "Google" ? "/icons/google-drive-logo.svg" : item.DocBased === "Microsoft" ? "/icons/sharepoint-logo.svg" : item.DocBased === "DarkAlley" ? "/icons/adobe-logo-placeholder.svg" : "" }" alt="" />
                   </div>`
                 : ""}
-                ${isDevelopmentMode() ? 
+                ${isDevelopmentMode() ?
                   `<div class="demo-info-wrapper">
-                    <button class="demo-info-btn" type="button" title="Click to learn more" data-demo-notes="${demoNotes}" data-demo-title="${item.Opportunity}">Demo Info</button>
+                    <button class="demo-info-btn" type="button" title="Click to learn more" data-demo-notes="${demoNotes}" data-demo-title="${item.Opportunity}">Demo Notes</button>
                   </div>`
                 : ""}
               </div>
@@ -92,14 +92,14 @@ export default function CardsPortfolio (block) {
         </div>
       `;
     };
-    
+
     groups.forEach((group) => {
       group.forEach((item) => {
         const isFeatured = item.Featured === 'true';
         updatedCards.push(createCardHTML(item, isFeatured));
       });
     });
-  
+
     block.innerHTML = `
       <div class="portfolio-card-container">
         <div class="filter-container">${createSelectOptions()}</div>
@@ -123,7 +123,7 @@ export default function CardsPortfolio (block) {
   function sortData(data) {
     let result = [];
     let temp = [];
-  
+
     for (let i = 0; i < data.length; i++) {
       temp.push(data[i]);
       if (temp.length === 8) { //groups of 8
@@ -131,17 +131,17 @@ export default function CardsPortfolio (block) {
         temp = [];
       }
     }
-  
+
     if (temp.length > 0) {
       result.push(temp);
     }
-  
+
     return result;
   }
 
   function handleSelectChange(event) {
     currentOption = event.target.value;
-  
+
     const filterConditions = {
       "all": (item) => true,
       "sharepoint": (item) => item.DocBased === "Microsoft",
@@ -152,23 +152,30 @@ export default function CardsPortfolio (block) {
       "forms": (item) => item.Forms === "true",
       "crosswalk": (item) => item.Crosswalk === "true",
     };
-  
+
     const filteredData = data.filter(filterConditions[currentOption]);
-  
+
     createCards([filteredData]);
   }
 
   function initEventHandlers() {
     const selectElement = block.querySelector('#options');
     selectElement.addEventListener('change', handleSelectChange);
-  
+
     // Add card-flip animation
     const cards = block.querySelectorAll('.card-flip');
     [...cards].forEach((card) => {
       card.addEventListener('click', function() {
+        // Unflip all other cards
+        cards.forEach(c => {
+          if (c !== card && c.classList.contains('is-flipped')) {
+            c.classList.remove('is-flipped');
+          }
+        });
+        // Toggle the current card
         card.classList.toggle('is-flipped');
       });
-  
+
       // Prevent the card from flipping when clicking on a link or button
       const linksAndButtons = card.querySelectorAll('a, button');
       [...linksAndButtons].forEach((el) => {
@@ -177,7 +184,7 @@ export default function CardsPortfolio (block) {
         });
       });
     });
-  
+
     // Add onclick event to demo-info-btn buttons
     const demoInfoButtons = block.querySelectorAll('.demo-info-btn');
     demoInfoButtons.forEach((button) => {
@@ -188,20 +195,20 @@ export default function CardsPortfolio (block) {
         const modal = document.getElementById('demoModal');
         const modalContent = document.getElementById('demoNotesContent');
         const modalHeader = modal.querySelector('.modal-header div');
-  
+
         modalContent.innerHTML = demoNotes;
-        modalHeader.textContent = `${demoTitle} - Demo Notes`;
+        modalHeader.textContent = `${demoTitle}`;
         modal.style.display = 'block';
       });
     });
-  
+
     // Close the modal
     const modal = document.getElementById('demoModal');
     const closeBtn = modal.querySelector('.close');
     closeBtn.addEventListener('click', () => {
       modal.style.display = 'none';
     });
-  
+
     // Close the modal when clicking outside of it
     window.addEventListener('click', (event) => {
       if (event.target === modal) {
@@ -215,12 +222,8 @@ export default function CardsPortfolio (block) {
 
     if (response.ok) {
       const jsonData = await response.json();
-      data = jsonData?.data;
-      
-      let sortedGroups = sortData(data);
-      createCards(sortedGroups);
-    } else {
-      console.error("Failed to fetch data");
+      data = jsonData.data;
+      createCards(sortData(data));
     }
   }
 

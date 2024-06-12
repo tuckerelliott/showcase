@@ -183,6 +183,7 @@
 .cards.portfolio .github-drive-wrapper .demo-info-btn {
   margin-top: 0.75rem;
   font-size: 18px;
+  border-radius: 5px;
 }
 
 .cards.portfolio .github-drive-wrapper .icon {
@@ -199,6 +200,7 @@
   display: inline-block;
   height: -webkit-fill-available;
   height: fill-available;
+  border-radius: 5px;
 }
 
 .cards.portfolio .github-drive-wrapper .github-link:hover {
