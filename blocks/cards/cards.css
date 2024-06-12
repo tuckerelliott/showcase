@@ -273,7 +273,7 @@
   height: 100%;
   transform-style: preserve-3d;
   transform-origin: center right;
-  transition: transform 1s;
+  transition: transform 0.75s;
 }
 
 .cards.portfolio .small-card .card-flip.is-flipped {
@@ -281,11 +281,11 @@
 }
 
 .cards.portfolio .small-card .card-flip .card.card-images.featured {
-  /* transition: visibility 0s 0.5s, opacity 0.5s linear; Delay visibility by 0.5s */
+  transition: visibility 0s 0.75s, opacity 0.75s linear;
 }
 
 .cards.portfolio .small-card .card-flip.is-flipped .card.card-images {
-  /* opacity: 0; */
+  opacity: 0;
 }
 
 .cards.portfolio .small-card .card {
@@ -362,8 +362,8 @@
   font-size: 28px;
   font-weight: bold;
   position: absolute;
-  right: 0;
-  top: -5px;
+  right: -15px;
+  top: -30px;
 }
 
 .close:hover,
