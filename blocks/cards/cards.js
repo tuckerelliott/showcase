@@ -8,6 +8,15 @@ export default function CardsPortfolio(block) {
 
   block.textContent = '';
 
+  function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
   function isDevelopmentMode() {
     const hostname = window.location.hostname;
     const port = window.location.port;
@@ -95,8 +104,15 @@ export default function CardsPortfolio(block) {
 
     groups.forEach((group) => {
       group.forEach((item) => {
-        const isFeatured = item.Featured === 'true';
-        updatedCards.push(createCardHTML(item, isFeatured));
+
+        const xsc = getParameterByName('xsc'); 
+        //console.log(xsc);
+        //console.log(item.XSC);
+
+        if ((!xsc) || (item.XSC.toLowerCase() == xsc.toLowerCase())) {
+          const isFeatured = item.Featured === 'true';
+          updatedCards.push(createCardHTML(item, isFeatured));
+        }
       });
     });
 
@@ -216,16 +232,6 @@ export default function CardsPortfolio(block) {
       }
     });
   }
-
-  function getParameterByName(name, url = window.location.href) {
-    name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-  }
-
 
   async function initialize() {
     var sheet = getParameterByName('sheet'); 
