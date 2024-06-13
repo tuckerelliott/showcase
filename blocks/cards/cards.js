@@ -217,8 +217,27 @@ export default function CardsPortfolio(block) {
     });
   }
 
+  function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+
   async function initialize() {
-    const response = await fetch(link?.href);
+    var sheet = getParameterByName('sheet'); 
+    var sheetParm = ""
+    
+    if (sheet) {
+      sheetParm = sheetParm.concat("sheet=", sheet);
+    } else {
+      sheetParm = sheetParm.concat("sheet=filtered");
+    }
+
+    const response = await fetch(link?.href.concat("?", sheetParm));
 
     if (response.ok) {
       const jsonData = await response.json();
