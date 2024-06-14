@@ -72,7 +72,7 @@ export default function CardsPortfolio(block) {
                 : ""}
                 ${item.DocBased ?
                   `<div class="icon">
-                    <img src="${item.DocBased === "Google" ? "/icons/google-drive-logo.svg" : item.DocBased === "Microsoft" ? "/icons/sharepoint-logo.svg" : item.DocBased === "DarkAlley" ? "/icons/adobe-logo-placeholder.svg" : "" }" alt="" />
+                    <img src="${item.DocBased === "Google" ? "/icons/google-drive-logo.svg" : item.DocBased === "Microsoft" ? "/icons/sharepoint-logo.svg" : item.DocBased === "Crosswalk" ? "/icons/adobe-logo-placeholder.svg" : "" }" alt="" />
                   </div>`
                 : ""}
                 ${isDevelopmentMode() ?
