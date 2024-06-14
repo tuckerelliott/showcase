@@ -23,6 +23,8 @@ main .hero-container {
 .hero h1 {
   margin-bottom: 0;
   margin-top: 10%;
+  margin-right: 10%;
+  text-align: right;
 }
 
 .hero h4 {
