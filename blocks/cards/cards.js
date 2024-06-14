@@ -62,7 +62,7 @@ export default function CardsPortfolio(block) {
             <div class="card card-info">
               <div class="date-live-wrapper">
                 <span>${formatDate(item.Added)}</span>
-                <span>XSC: ${item.XSC}</span>
+                <span>Sol SC: ${item.XSC}</span>
               </div>
               <div class="github-drive-wrapper">
                 ${item.DemoGit ?
