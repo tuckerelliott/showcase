@@ -240,7 +240,7 @@ export default function CardsPortfolio(block) {
     if (sheet) {
       sheetParm = sheetParm.concat("sheet=", sheet);
     } else {
-      sheetParm = sheetParm.concat("sheet=filtered");
+      sheetParm = sheetParm.concat("sheet=raw");
     }
 
     const response = await fetch(link?.href.concat("?", sheetParm));
